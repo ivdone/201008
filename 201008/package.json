@@ -1,0 +1,30 @@
+{
+  "name": "201008_platform",
+  "version": "1.0.0",
+  "description": "Zero sum betting platform",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivdone/201008.git"
+  },
+  "keywords": [
+    "201008"
+  ],
+  "author": "zzz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ivdone/201008/issues"
+  },
+  "homepage": "https://github.com/ivdone/201008#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cookie": "^0.3.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6"
+  }
+}
