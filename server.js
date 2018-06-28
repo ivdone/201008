@@ -18,6 +18,7 @@ function getFormattedDate(){
 var credentials = {};
 var transactions = [];
 for (i = 0; i < users.length; i++) {
+	console.log(users[i] + " " + passwords[i]);
 	credentials[users[i]] = passwords[i];
 }
 
@@ -31,7 +32,7 @@ app.use(session({secret: "Shhhh"}));
 
 app.get('/', function (req, res) {
 	if (req.session.user_name === undefined) {
-		console.log("redirecting to signin");
+		console.log("redirecting to signin from /");
 		res.redirect('signin');
 		return;
 	}
@@ -56,7 +57,7 @@ app.get('/logout', function(req, res) {
 app.get('/index', function (req, res) {
 	console.log("user name saved in session : " + req.session.user_name);
 	if (req.session.user_name === undefined) {
-		console.log("redirecting to signin");
+		console.log("redirecting to signin from /index");
 		res.redirect('signin');
 		return;
 	}
@@ -98,6 +99,10 @@ app.post('/bet', function (req, res) {
 
 app.get('/transactions', function (req, res) {
 	res.json(transactions);
+});
+
+app.get('/transactions/clear', function (req, res) {
+	transactions = [];
 });
 
 app.listen(3000);
