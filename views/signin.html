@@ -19,7 +19,7 @@
           user=$("#username").val();
           pass=$("#password").val();
           console.log(user + pass);
-          $.post("http://localhost:3000/login", {username : user, password : pass}, function(data){
+          $.post("http://101.132.130.160/login", {username : user, password : pass}, function(data){
             if (data === "failed")
               $("#response").text(data);
           });

@@ -20,7 +20,7 @@
           var hg=$("#hg").val();
           var ag=$("#ag").val();
           var bet=$("#bet").val();
-          $.post("http://localhost:3000/bet", {homegoal : hg, awaygoal : ag, nbet : bet}, function(data){
+          $.post("http://101.132.130.160/bet", {homegoal : hg, awaygoal : ag, nbet : bet}, function(data){
             if (data === "success") {
               $("#response").removeClass("invalid-tooltip").addClass("valid-tooltip").text(data);
             } else {

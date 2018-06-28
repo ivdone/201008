@@ -4,8 +4,8 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var app = express();
 
-var path = __dirname + '/views/'
-
+var path = __dirname + '/views/';
+var server_url = '101.132.130.160';
 var users = ['fsy', 'lzh', 'hy', 'xjw', 'yjb', 'xq', 'zx', 'wjl', 'cxy', 'ljy', 'zzz', 'fz', 'hl', 'ys', 'zxd', 'zk', 'hjc']
 var passwords = ['1598', '9982', '5665', '8107', '5754', '2408', '0482', '9808', '3932', '9603', '7971', '2875', '2103', '8086', '7606', '0051', '2213']
 
@@ -93,4 +93,4 @@ app.get('/transactions', function (req, res) {
 	res.json(transactions);
 });
 
-app.listen(3000);
+app.listen(80);
