@@ -4,10 +4,16 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var app = express();
 
-var path = __dirname + '/views/';
-var server_url = '101.132.130.160';
+var path = __dirname + '/views/'
+
 var users = ['fsy', 'lzh', 'hy', 'xjw', 'yjb', 'xq', 'zx', 'wjl', 'cxy', 'ljy', 'zzz', 'fz', 'hl', 'ys', 'zxd', 'zk', 'hjc']
 var passwords = ['1598', '9982', '5665', '8107', '5754', '2408', '0482', '9808', '3932', '9603', '7971', '2875', '2103', '8086', '7606', '0051', '2213']
+
+function getFormattedDate(){
+    var d = new Date();
+    d = d.getFullYear() + "-" + ('0' + (d.getMonth() + 1)).slice(-2) + "-" + ('0' + d.getDate()).slice(-2) + " " + ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2) + ":" + ('0' + d.getSeconds()).slice(-2);
+    return d;
+}
 
 var credentials = {};
 var transactions = [];
@@ -82,9 +88,10 @@ app.post('/bet', function (req, res) {
 	var bet = req.body.nbet;
 	var user = req.session.user_name;
 	console.log("betting.... ");
-	console.log(user + " is betting $" + bet + " on " + hg + ":" + ag);
+	var dateNow = getFormattedDate();
+	console.log(dateNow + ": " + user + " is betting $" + bet + " on " + hg + ":" + ag);
 
-	transactions.push({user : user, bet : bet, hg : hg, ag : ag});
+	transactions.push({user : user, bet : bet, hg : hg, ag : ag, date : dateNow});
 	
 	res.send("success");
 });
@@ -93,4 +100,4 @@ app.get('/transactions', function (req, res) {
 	res.json(transactions);
 });
 
-app.listen(80);
+app.listen(3000);
