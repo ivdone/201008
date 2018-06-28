@@ -17,6 +17,8 @@ function getFormattedDate(){
 
 var credentials = {};
 var transactions = [];
+var transactionsPerUser = {};
+
 for (i = 0; i < users.length; i++) {
 	console.log(users[i] + " " + passwords[i]);
 	credentials[users[i]] = passwords[i];
@@ -37,20 +39,17 @@ app.get('/', function (req, res) {
 		return;
 	}
 
+	console.log("redirecting from / to /index");
 	res.redirect('/index');
-	
 });
 
 app.get('/signin', function(req, res) {
-	if (req.session.user_name !== undefined) {
-		res.redirect('/');
-		return;
-	}
 	res.sendFile(path + 'signin.html');
 });
 
 app.get('/logout', function(req, res) {
 	req.session.user_name = undefined;
+	console.log("redirecting from /logout to /");
 	res.redirect('/');
 });
 
@@ -58,7 +57,7 @@ app.get('/index', function (req, res) {
 	console.log("user name saved in session : " + req.session.user_name);
 	if (req.session.user_name === undefined) {
 		console.log("redirecting to signin from /index");
-		res.redirect('signin');
+		res.redirect('/signin');
 		return;
 	}
 
@@ -80,10 +79,9 @@ app.post('/login', function (req, res) {
 
 app.post('/bet', function (req, res) {
 	if (req.session.user_name === undefined) {
-		res.redirect('signin');
+		res.redirect('/signin');
 		return;
 	}
-
 	var ag = req.body.awaygoal;
 	var hg = req.body.homegoal;
 	var bet = req.body.nbet;
@@ -91,9 +89,11 @@ app.post('/bet', function (req, res) {
 	console.log("betting.... ");
 	var dateNow = getFormattedDate();
 	console.log(dateNow + ": " + user + " is betting $" + bet + " on " + hg + ":" + ag);
-
 	transactions.push({user : user, bet : bet, hg : hg, ag : ag, date : dateNow});
 	
+	if (transactionsPerUser[user] === undefined)
+		transactionsPerUser[user] = [];
+	transactionsPerUser[user].push({user : user, bet : bet, hg : hg, ag : ag, date : dateNow});
 	res.send("success");
 });
 
@@ -101,8 +101,19 @@ app.get('/transactions', function (req, res) {
 	res.json(transactions);
 });
 
+app.get('/transactions/my', function (req, res) {
+	if (req.session.user_name === undefined) {
+		res.redirect('/signin');
+		return;
+	}
+
+	var user = req.session.user_name;
+	res.json(transactionsPerUser[user]);
+})
+
 app.get('/transactions/clear', function (req, res) {
 	transactions = [];
+	transactionsPerUser = {};
 });
 
 app.listen(3000);

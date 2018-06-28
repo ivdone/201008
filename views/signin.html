@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../favicon.ico">
+    <link rel="icon" href="../img/favicon.ico?v=2">
 
     <title>Signin</title>
+
     <script
-    src="https://code.jquery.com/jquery-3.3.1.js"
-    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-    crossorigin="anonymous"></script>
+            src="https://code.jquery.com/jquery-3.3.1.js"
+            integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+            crossorigin="anonymous"></script>
+
     <script type='text/javascript'>
       $(document).ready(function(){
         var user,pass;
@@ -19,10 +21,14 @@
           user=$("#username").val();
           pass=$("#password").val();
           console.log(user + pass);
-          $.post("http://101.132.130.160/login", {username : user, password : pass}, function(data){
+          $.post("/login", {username: user, password: pass}, function (data) {
             if (data === "failed")
-              $("#response").text(data);
-          });
+              $("#response").html("Login failed, check username and password");
+            else if (data === "success")
+              window.location.replace("/index");
+            else
+              $("#response").html("Unknown server error");
+          }, 'text');
         });
       });
     </script>
@@ -38,14 +44,18 @@
     <div class="container">
 
       <form class="form-signin">
+        <div class="text-center">
+          <img src="../img/ng.jpg" alt="" width="72" height="72">          
+        </div>
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputUserName" class="sr-only">User Name</label>
         <input type="text" id="username" class="form-control" placeholder="User Name" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" id="password" class="form-control" placeholder="Password" required>
-        <button class="btn btn-lg btn-primary btn-block" id="submit" type="submit">Sign in</button>
-        <div id='response' class="invalid-tooltip"></div>
+        <button class="btn btn-lg btn-primary btn-block" id="submit" type="button">Sign in</button>
+        <div id="response" class="text-danger"></div>
       </form>
+
 
     </div> <!-- /container -->
 
