@@ -22,7 +22,7 @@
           $.post("http://localhost:3000/login", {username : user, password : pass}, function(data){
             if (data === "failed")
               $("#response").text(data);
-          }, 'json');
+          });
         });
       });
     </script>
