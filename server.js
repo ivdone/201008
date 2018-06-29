@@ -114,6 +114,7 @@ app.get('/transactions/my', function (req, res) {
 app.get('/transactions/clear', function (req, res) {
 	transactions = [];
 	transactionsPerUser = {};
+	res.send("OK");
 });
 
 app.listen(3000);

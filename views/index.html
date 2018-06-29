@@ -26,14 +26,14 @@
   <body>
 
     <div class="container">
-      <form>
+      <form class="needs-validation" id="bet-form" novalidate>
         <div class="row">
           <div class="col">
-            <div class="input-group input-group-sm mb-3">
+            <div class="input-group input-group-sm mb-3 has-feedback is-valid">
               <div class="input-group-prepend">
                 <span class="input-group-text">主队进球</span>
               </div>
-              <input type="number" id="hg" min="0" max="5" class="form-control" aria-label="主队">
+              <input type="number" id="hg" min="0" max="5" class="form-control" aria-label="主队" required>
             </div>
           </div>
           <div class="col">
@@ -41,7 +41,7 @@
               <div class="input-group-prepend">
                 <span class="input-group-text">客队进球</span>
               </div>
-              <input type="number" id="ag" min="0" max="5" class="form-control" aria-label="客队">
+              <input type="number" id="ag" min="0" max="5" class="form-control" aria-label="客队" required>
             </div>
           </div>
           <div class="col">
@@ -49,7 +49,7 @@
               <div class="input-group-prepend">
                 <span class="input-group-text">下注金额(1 - 200)</span>
               </div>
-              <input type="number" id="bet" min="1" max="200" class="form-control" aria-label="下注金额">
+              <input type="number" id="bet" min="1" max="200" class="form-control" aria-label="下注金额" required>
             </div>
           </div>
         </div>

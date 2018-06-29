@@ -17,21 +17,6 @@ $(document).ready(function(){
       this.show($('#alert-warn'), msg);
     }
   }
-  
-  $("#submit").click(function(){
-    var hg=$("#hg").val();
-    var ag=$("#ag").val();
-    var bet=$("#bet").val();
-    $.post("/bet", {homegoal : hg, awaygoal : ag, nbet : bet}, function(data){
-      if (data === "success") {
-        Alert.success("<strong>投注成功!</strong> You successfully registered your bet</a>.");
-      } else {
-        Alert.warn("<strong>投注失败!</strong> Try submitting again.");
-      }
-
-      refreshList();
-    }, 'text');
-  });
 
   function refreshList() {
     $.get("/transactions/my", function(data) {
@@ -47,4 +32,28 @@ $(document).ready(function(){
       }
     });
   }
+  $("#submit").click(function(){    
+    var form = $("#bet-form");
+    form.addClass("was-validated");
+
+    if (form[0].checkValidity() === false) {
+      return;
+    }
+
+    var hg=$("#hg").val();
+    var ag=$("#ag").val();
+    var bet=$("#bet").val();
+    $.post("/bet", {homegoal : hg, awaygoal : ag, nbet : bet}, function(data){
+      if (data === "success") {
+        Alert.success("<strong>投注成功!</strong> You have successfully registered your bet</a>.");
+      } else {
+        Alert.warn("<strong>投注失败!</strong> Try submitting again.");
+      }
+      form.removeClass("was-validated");
+      refreshList();
+    }, 'text');
+  });
+
+  refreshList();
+  
 });
