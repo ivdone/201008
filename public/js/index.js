@@ -25,6 +25,7 @@ $(document).ready(function(){
       for (i = rowCount; i < data.length; i++) {
         tbd.append(`<tr id="row${i}">
                     <td>${data[i].date}</td>
+                    <td>${data[i].fid}</td>
                     <td>${data[i].hg}</td>
                     <td>${data[i].ag}</td>
                     <td>${data[i].bet}</td>
@@ -61,7 +62,6 @@ $(document).ready(function(){
     "completed" : "已完成",
     "future" : "即将开始"
   }
-
   function refreshMatch(match) {
     var card = $("#" + match.fifa_id);
     const time = new Date(match.datetime);
@@ -74,13 +74,9 @@ $(document).ready(function(){
     card.find(".ag").html(match.away_team.goals);
   }
 
-  function getCurrentMatch() {
-    $.get("https://worldcup.sfg.io/matches/today?by_date=asc", function(data) {
-      var ginfo = $("#game-info");
-      for (i = 0; i < data.length; i++) {
-        var match = data[i];
-        
-        var ele = ginfo.append(`<div class="class="col-xl-3 col-md-6 col-sm-12">
+  function appendMatch(match) {
+    var ginfo = $("#game-info");
+    var ele = ginfo.append(`<div class="class="col-xl-3 col-md-6 col-sm-12">
                         <div id="${match.fifa_id}" class="card game-info-card" style="text-align:center;">
                           <div class="card-body">
                             <div>
@@ -94,33 +90,82 @@ $(document).ready(function(){
                         </div>
                       </div>`);
 
+    var form = $("#"+match.fifa_id).append(`
+        <form class="needs-validation border" id="bet-form${match.fifa_id}" novalidate>
+          <div class="row">
+            <div class="col">
+              <input type="number" id="hg${match.fifa_id}" min="0" max="5" class="form-control" aria-label="主队" required>
+            </div>
+              -
+            <div class="col">
+              <input type="number" id="ag${match.fifa_id}" min="0" max="5" class="form-control" aria-label="客队" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">                
+              <div class="input-group input-group-sm">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$(1 - 200)</span>
+                </div>
+                <input type="number" id="bet${match.fifa_id}" min="1" max="200" class="form-control" aria-label="下注金额" required>
+              </div>
+            </div>
+            <div class="col">
+              <button type="button" id="submit${match.fifa_id}" class="btn btn-primary mb-2">下注</button>
+            </div>
+          </div>
+          </div>
+      </form>
+    `);
+
+    $("#submit" + match.fifa_id).click(
+      function(fid) {
+        return function() {
+          var form = $("#bet-form" + fid);
+          form.addClass("was-validated");
+      
+          if (form[0].checkValidity() === false) {
+            return;
+          }
+      
+          var hg=$("#hg"+ fid).val();
+          var ag=$("#ag" + fid).val();
+          var bet=$("#bet" + fid).val();
+          $.post("/bet", {homegoal : hg, awaygoal : ag, nbet : bet, fid : fid}, function(data){
+            if (data === "success") {
+              Alert.success("<strong>投注成功!</strong> You have successfully registered your bet</a>.");
+            } else {
+              Alert.warn("<strong>投注失败!</strong> Try submitting again.");
+            }
+            form.removeClass("was-validated");
+            refreshList();
+          }, 'text');
+        };
+      }(match.fifa_id));
+  }
+
+  function getCurrentMatch() {
+    $.get("https://worldcup.sfg.io/matches/today?by_date=asc", function(data) {
+      for (i = 0; i < data.length; i++) {
+        var match = data[i];
+        appendMatch(match);        
         refreshMatch(match);
       }
     }, 'json');
-  }
-
-  $("#submit").click(function(){    
-    var form = $("#bet-form");
-    form.addClass("was-validated");
-
-    if (form[0].checkValidity() === false) {
-      return;
-    }
-
-    var hg=$("#hg").val();
-    var ag=$("#ag").val();
-    var bet=$("#bet").val();
-    $.post("/bet", {homegoal : hg, awaygoal : ag, nbet : bet}, function(data){
-      if (data === "success") {
-        Alert.success("<strong>投注成功!</strong> You have successfully registered your bet</a>.");
-      } else {
-        Alert.warn("<strong>投注失败!</strong> Try submitting again.");
-      }
-      form.removeClass("was-validated");
-      refreshList();
-    }, 'text');
-  });
+  }  
 
   refreshList();
   getCurrentMatch();
+
+  window.setInterval(function(){
+    $.get("https://worldcup.sfg.io/matches/today?by_date=asc", function(data) {
+      for (i = 0; i < data.length; i++) {
+        var match = data[i];
+        if ($("#"+match.fifa_id) !== undefined)
+          refreshMatch(match);
+        else
+          appendMatch(match);
+      }
+    }, 'json');
+  }, 5000);
 });

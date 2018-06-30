@@ -16,7 +16,7 @@ function getFormattedDate(){
 }
 
 var credentials = {};
-var transactions = [];
+var transactions = {};
 var transactionsPerUser = {};
 
 for (i = 0; i < users.length; i++) {
@@ -85,15 +85,18 @@ app.post('/bet', function (req, res) {
 	var ag = req.body.awaygoal;
 	var hg = req.body.homegoal;
 	var bet = req.body.nbet;
+	var fid = req.body.fid;
 	var user = req.session.user_name;
 	console.log("betting.... ");
 	var dateNow = getFormattedDate();
-	console.log(dateNow + ": " + user + " is betting $" + bet + " on " + hg + ":" + ag);
-	transactions.push({user : user, bet : bet, hg : hg, ag : ag, date : dateNow});
+	console.log(dateNow + ": " + user + " is betting $" + bet + " on " + hg + ":" + ag + " match : " + fid);
+	if (transactions[fid] === undefined)
+		transactions[fid] = [];
+	transactions[fid].push({user : user, bet : bet, hg : hg, ag : ag, fid : fid, date : dateNow});
 	
 	if (transactionsPerUser[user] === undefined)
 		transactionsPerUser[user] = [];
-	transactionsPerUser[user].push({user : user, bet : bet, hg : hg, ag : ag, date : dateNow});
+	transactionsPerUser[user].push({user : user, bet : bet, hg : hg, ag : ag, fid : fid, date : dateNow});
 	res.send("success");
 });
 

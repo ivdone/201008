@@ -28,52 +28,21 @@
       <h3 class="match-section-title">今日比赛</h3>
       <div id="game-info" class="row match-height border-bottom">        
       </div>
-
-      <form class="needs-validation border" id="bet-form" novalidate>
-        <div class="row">
-          <div class="col">
-            <div class="input-group input-group-sm mb-3 has-feedback is-valid">
-              <div class="input-group-prepend">
-                <span class="input-group-text">主队进球</span>
-              </div>
-              <input type="number" id="hg" min="0" max="5" class="form-control" aria-label="主队" required>
-            </div>
-          </div>
-          <div class="col">
-            <div class="input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text">客队进球</span>
-              </div>
-              <input type="number" id="ag" min="0" max="5" class="form-control" aria-label="客队" required>
-            </div>
-          </div>
-          <div class="col">
-            <div class="input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text">下注金额(1 - 200)</span>
-              </div>
-              <input type="number" id="bet" min="1" max="200" class="form-control" aria-label="下注金额" required>
-            </div>
-          </div>
-        </div>
-
-        <button type="button" id="submit" class="btn btn-primary mb-2">下注</button>
-
-        <div id="alert-success" class="alert alert-success" role="alert">
-            <button type="button" class="close alert-close" aria-label="Close"><span aria-hidden="true">×</span></button>
-            <span class="alert-msg"></span>
-        </div>
-        <div id="alert-warn" class="alert alert-warning" role="alert">
-            <button type="button" class="close alert-close" aria-label="Close"><span aria-hidden="true">×</span></button>
-            <span class="alert-msg"></span>
-        </div>
-
-      </form>
+      <div id="alert-success" class="alert alert-success" role="alert">
+        <button type="button" class="close alert-close" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <span class="alert-msg"></span>
+      </div>
+      <div id="alert-warn" class="alert alert-warning" role="alert">
+          <button type="button" class="close alert-close" aria-label="Close"><span aria-hidden="true">×</span></button>
+          <span class="alert-msg"></span>
+      </div>
+      
 
       <table class="table table-sm">        
         <thead>
           <tr>
             <th scope="col">下注时间</th>
+            <th scope="col">比赛ID</th>
             <th scope="col">主队进球</th>
             <th scope="col">客队进球</th>
             <th scope="col">下注</th>
