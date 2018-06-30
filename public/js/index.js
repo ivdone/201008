@@ -183,5 +183,5 @@ $(document).ready(function(){
           appendMatch(match);
       }
     }, 'json');
-  }, 5000);
+  }, 10000);
 });
