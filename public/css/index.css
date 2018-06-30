@@ -1,0 +1,11 @@
+.game-info-card {
+  width: 20rem;
+}
+
+.scores {
+  font-weight: bold;
+}
+
+.match-section-title {
+  text-align: center;  
+}

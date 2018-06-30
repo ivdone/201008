@@ -117,4 +117,4 @@ app.get('/transactions/clear', function (req, res) {
 	res.send("OK");
 });
 
-app.listen(3000);
+app.listen(process.env.PORT || 80);

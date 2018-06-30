@@ -32,6 +32,73 @@ $(document).ready(function(){
       }
     });
   }
+
+  countryCodes = {
+    URU : "UY",
+    POR : "PT",
+    FRA : "FR",
+    ARG : "AR",
+    BRA : "BR",
+    MEX : "MX",
+    BEL : "BE",
+    JPN : "JP",
+    ESP : "ES",
+    RUS : "RU",
+    HRV : "HR",
+    DNK : "DK",
+    SWE : "SE",
+    CHE : "CH",
+    COL : "CO",
+    GBR : "GB",
+  };
+
+  badgemap = {
+    "completed" : "badge-success",
+    "future" : "badge-info",
+  }
+
+  statusmap = {
+    "completed" : "已完成",
+    "future" : "即将开始"
+  }
+
+  function refreshMatch(match) {
+    var card = $("#" + match.fifa_id);
+    const time = new Date(match.datetime);
+
+    var badge = badgemap[match.status] || "badge-danger";
+    var badgetext = statusmap[match.status] || "直播中";
+    card.find(".badge").removeClass().addClass("badge").addClass(badge).html(badgetext);
+    card.find(".time-from-now").html(moment(time).fromNow());
+    card.find(".hg").html(match.home_team.goals);
+    card.find(".ag").html(match.away_team.goals);
+  }
+
+  function getCurrentMatch() {
+    $.get("https://worldcup.sfg.io/matches/today?by_date=asc", function(data) {
+      var ginfo = $("#game-info");
+      for (i = 0; i < data.length; i++) {
+        var match = data[i];
+        
+        var ele = ginfo.append(`<div class="class="col-xl-3 col-md-6 col-sm-12">
+                        <div id="${match.fifa_id}" class="card game-info-card" style="text-align:center;">
+                          <div class="card-body">
+                            <div>
+                              <img src="http://www.countryflags.io/${countryCodes[match.home_team.code]}/flat/64.png"> vs. <img src="http://www.countryflags.io/${countryCodes[match.away_team.code]}/flat/64.png">
+                            </div>
+                            <span class="badge badge-info">Unknown</span>
+                            <br/>
+                            <span class="time-from-now">Unknown</span>
+                            <div class="scores"><span class="hg">0</span> - <span class="ag">0</span></div>
+                          </div>
+                        </div>
+                      </div>`);
+
+        refreshMatch(match);
+      }
+    }, 'json');
+  }
+
   $("#submit").click(function(){    
     var form = $("#bet-form");
     form.addClass("was-validated");
@@ -55,5 +122,5 @@ $(document).ready(function(){
   });
 
   refreshList();
-  
+  getCurrentMatch();
 });
