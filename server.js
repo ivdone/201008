@@ -86,17 +86,18 @@ app.post('/bet', function (req, res) {
 	var hg = req.body.homegoal;
 	var bet = req.body.nbet;
 	var fid = req.body.fid;
+	var bettime = req.body.bet_time;
 	var user = req.session.user_name;
 	console.log("betting.... ");
 	var dateNow = getFormattedDate();
 	console.log(dateNow + ": " + user + " is betting $" + bet + " on " + hg + ":" + ag + " match : " + fid);
 	if (transactions[fid] === undefined)
 		transactions[fid] = [];
-	transactions[fid].push({user : user, bet : bet, hg : hg, ag : ag, fid : fid, date : dateNow});
-	
+	transactions[fid].push({user : user, bet : bet, hg : hg, ag : ag, fid : fid, bettime : bettime || "赛前"});
+
 	if (transactionsPerUser[user] === undefined)
 		transactionsPerUser[user] = [];
-	transactionsPerUser[user].push({user : user, bet : bet, hg : hg, ag : ag, fid : fid, date : dateNow});
+	transactionsPerUser[user].push({user : user, bet : bet, hg : hg, ag : ag, fid : fid, bettime : bettime || "赛前"});
 	res.send("success");
 });
 

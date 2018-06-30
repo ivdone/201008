@@ -23,8 +23,10 @@ $(document).ready(function(){
       var tbd = $("#historyTable");
       var rowCount = $('#historyTable tr').length;
       for (i = rowCount; i < data.length; i++) {
+        var bt = data[i].bettime || "赛前"
+
         tbd.append(`<tr id="row${i}">
-                    <td>${data[i].date}</td>
+                    <td>${bt}</td>
                     <td>${data[i].fid}</td>
                     <td>${data[i].hg}</td>
                     <td>${data[i].ag}</td>
@@ -69,9 +71,16 @@ $(document).ready(function(){
     var badge = badgemap[match.status] || "badge-danger";
     var badgetext = statusmap[match.status] || "直播中";
     card.find(".badge").removeClass().addClass("badge").addClass(badge).html(badgetext);
-    card.find(".time-from-now").html(moment(time).fromNow());
     card.find(".hg").html(match.home_team.goals);
     card.find(".ag").html(match.away_team.goals);
+    card.find(".time-from-now").html(moment(time).fromNow());
+    if (match.time) {
+      card.find(".match-time").html(match.time).show();
+      card.find(".time-from-now").html(moment(time).fromNow()).hide();
+    } else {
+      card.find(".match-time").html(match.time).hide();
+      card.find(".time-from-now").html(moment(time).fromNow()).show();
+    }
   }
 
   function appendMatch(match) {
@@ -84,8 +93,9 @@ $(document).ready(function(){
                             </div>
                             <span class="badge badge-info">Unknown</span>
                             <br/>
-                            <span class="time-from-now">Unknown</span>
                             <div class="scores"><span class="hg">0</span> - <span class="ag">0</span></div>
+                            <span class="time-from-now">Unknown</span>
+                            <span class="match-time"></span>
                           </div>
                         </div>
                       </div>`);
@@ -131,7 +141,7 @@ $(document).ready(function(){
           var hg=$("#hg"+ fid).val();
           var ag=$("#ag" + fid).val();
           var bet=$("#bet" + fid).val();
-          $.post("/bet", {homegoal : hg, awaygoal : ag, nbet : bet, fid : fid}, function(data){
+          $.post("/bet", {homegoal : hg, awaygoal : ag, nbet : bet, fid : fid, bet_time : $("#" + match.fifa_id).find(".match-time").html()}, function(data){
             if (data === "success") {
               Alert.success("<strong>投注成功!</strong> You have successfully registered your bet</a>.");
             } else {
