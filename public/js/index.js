@@ -77,10 +77,16 @@ $(document).ready(function(){
     if (match.time) {
       card.find(".match-time").html(match.time).show();
       card.find(".time-from-now").html(moment(time).fromNow()).hide();
+
+      if (match.time === "full-time" || parseInt(match.time.substr(0, 2)) >= 80) {
+        card.find("input").prop('disabled', true);
+        card.find("button").prop('disabled', true).off("click");
+      }
     } else {
       card.find(".match-time").html(match.time).hide();
       card.find(".time-from-now").html(moment(time).fromNow()).show();
     }
+
   }
 
   function appendMatch(match) {
