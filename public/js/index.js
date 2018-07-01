@@ -53,6 +53,8 @@ $(document).ready(function(){
     CHE : "CH",
     COL : "CO",
     GBR : "GB",
+    CRO : "HR",
+    DEN : "DK",
   };
 
   badgemap = {
