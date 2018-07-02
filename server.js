@@ -1,4 +1,5 @@
 var express = require('express');
+var request = require('request');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
@@ -82,9 +83,9 @@ app.post('/bet', function (req, res) {
 		res.redirect('/signin');
 		return;
 	}
-	var ag = req.body.awaygoal;
-	var hg = req.body.homegoal;
-	var bet = req.body.nbet;
+	var ag = parseInt(req.body.awaygoal);
+	var hg = parseInt(req.body.homegoal);
+	var bet = parseInt(req.body.nbet);
 	var fid = req.body.fid;
 	var bettime = req.body.bet_time;
 	var user = req.session.user_name;
@@ -116,9 +117,124 @@ app.get('/transactions/my', function (req, res) {
 })
 
 app.get('/transactions/clear', function (req, res) {
+	if (req.session.user_name !== "zzz") {
+		res.send("Forbbiden");
+		return;
+	}
 	transactions = {};
 	transactionsPerUser = {};
 	res.send("OK");
+});
+
+app.get('/transactions/clear/:match', function (req, res) {
+	if (req.session.user_name !== "zzz") {
+		res.send("Forbbiden");
+		return;
+	}
+	
+	var match = req.params.match;
+	delete transactions[match];
+
+	for (var user in transactionsPerUser) {
+		for (var tran = transactionsPerUser[user].length - 1; tran >= 0; tran--) {
+			if (transactionsPerUser[user][tran].fid === match) {
+				transactionsPerUser[user].splice(tran, 1);
+			}
+		}
+	}
+
+	res.send("OK");
+});
+
+function calculateResult(fid, score) {
+	console.log("calculating " + fid + " " + score);
+	var transaction = transactions[fid];
+	var total = 0;
+	var totalWinnerBet = 0;
+	var totalWinner = {};
+	var result = {};
+	if (transaction === undefined)
+		return {match : fid, result : {}};
+	for (var t of transaction) {
+		if (result[t.user] === undefined)
+			result[t.user] = 0;
+
+		if (t.hg === score[0] && t.ag === score[1]) {
+			if (totalWinner[t.user] === undefined)
+				totalWinner[t.user] = 0;
+
+			totalWinner[t.user] += t.bet;
+			totalWinnerBet += t.bet;
+
+			single = total / totalWinnerBet;
+
+			for (var u in totalWinner) {
+				result[u] += totalWinner[u] * single;
+			}
+
+			total = 0;
+		} else {
+			total += t.bet;
+			result[t.user] -= t.bet;
+		}
+	}
+
+	if (totalWinnerBet === 0)
+		return {match : fid, result : {}};
+
+	single = total / totalWinnerBet;
+	for (var u in totalWinner) {
+		result[u] += totalWinner[u] * single;
+	}
+
+	return {match: fid, result : result};
+}
+
+function calculatePricePool(fid) {
+	var transaction = transactions[fid];
+	var total = 0;
+	if (transaction === undefined)
+		return {match : fid, result : 0};
+	for (var t of transaction) {
+		total += t.bet;
+	}
+
+	return {match: fid, result : total};
+}
+
+app.get('/transactions/result/:match', function (req, res) {	
+	var match = req.params.match;
+	request('https://worldcup.sfg.io/matches/' + match, { json: true }, (err, response, body) => {
+	  var r = [];	   	
+	  for (var m in body) {	 
+	  	r.push(calculateResult(body[m].fifa_id, [body[m].home_team.goals, body[m].away_team.goals]));	    
+	  }
+	  res.json(r);
+	});	
+});
+
+app.get('/transactions/result/', function (req, res) {	
+	request('https://worldcup.sfg.io/matches/today', { json: true }, (err, response, body) => {
+	  if (err) { res.send("error"); return; }
+	  var r = [];
+	  for (var m in body) {
+	  	r.push(calculateResult(body[m].fifa_id, [body[m].home_team.goals, body[m].away_team.goals]));	    
+	  }
+	  res.json(r);
+	});	
+});
+
+app.get('/transactions/pricepool/:match', function (req, res) {		
+	res.json([calculatePricePool(req.params.match)]);
+});
+
+app.get('/transactions/pricepool', function (req, res) {	
+	var r = [];
+	for (var t in transactions) {
+		r.push(calculatePricePool(t));
+	}
+
+	res.json(r);
 });
 
 app.listen(process.env.PORT || 80);

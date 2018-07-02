@@ -18,20 +18,28 @@ $(document).ready(function(){
     }
   }
 
-  function refreshList() {
+  function refreshBets() {
     $.get("/transactions/my", function(data) {
       var tbd = $("#historyTable");
       var rowCount = $('#historyTable tr').length;
       for (i = rowCount; i < data.length; i++) {
         var bt = data[i].bettime || "赛前"
-
+        var teams = currentMatches[data[i].fid];
         tbd.append(`<tr id="row${i}">
                     <td>${bt}</td>
                     <td>${data[i].fid}</td>
+                    <td>${teams.home_team_country} vs ${teams.away_team_country}</td>
                     <td>${data[i].hg}</td>
                     <td>${data[i].ag}</td>
                     <td>${data[i].bet}</td>
                     </tr>`);
+      }
+    });
+
+    $.get("/transactions/pricepool", function(data) {      
+      for (i = 0; i < data.length; i++) {
+        var dt = data[i];
+        $("#" + dt.match).find(".price-pool").html(dt.result);
       }
     });
   }
@@ -66,6 +74,9 @@ $(document).ready(function(){
     "completed" : "已完成",
     "future" : "即将开始"
   }
+
+  var currentMatches = {};
+
   function refreshMatch(match) {
     var card = $("#" + match.fifa_id);
     const time = new Date(match.datetime);
@@ -93,10 +104,13 @@ $(document).ready(function(){
 
   function appendMatch(match) {
     var ginfo = $("#game-info");
+
+    currentMatches[match.fifa_id] = {home_team_country : match.home_team_country, away_team_country : match.away_team_country};
+
     var ele = ginfo.append(`<div class="class="col-xl-3 col-md-6 col-sm-12">
                         <div id="${match.fifa_id}" class="card game-info-card" style="text-align:center;">
                           <div class="card-body">
-                            <div>
+                            <div class>
                               <img src="http://www.countryflags.io/${countryCodes[match.home_team.code]}/flat/64.png"> vs. <img src="http://www.countryflags.io/${countryCodes[match.away_team.code]}/flat/64.png">
                             </div>
                             <span class="badge badge-info">Unknown</span>
@@ -104,6 +118,8 @@ $(document).ready(function(){
                             <div class="scores"><span class="hg">0</span> - <span class="ag">0</span></div>
                             <span class="time-from-now">Unknown</span>
                             <span class="match-time"></span>
+                            <br/>
+                            <span class="gold-text">￥</span><span class="price-pool gold-text">0</span>
                           </div>
                         </div>
                       </div>`);
@@ -114,7 +130,7 @@ $(document).ready(function(){
             <div class="col">
               <input type="number" id="hg${match.fifa_id}" min="0" max="5" class="form-control" aria-label="主队" required>
             </div>
-              -
+            <div>-</div>
             <div class="col">
               <input type="number" id="ag${match.fifa_id}" min="0" max="5" class="form-control" aria-label="客队" required>
             </div>
@@ -123,7 +139,7 @@ $(document).ready(function(){
             <div class="col">                
               <div class="input-group input-group-sm">
                 <div class="input-group-prepend">
-                  <span class="input-group-text">$(1 - 200)</span>
+                  <span class="input-group-text">￥(1 - 200)</span>
                 </div>
                 <input type="number" id="bet${match.fifa_id}" min="1" max="200" class="form-control" aria-label="下注金额" required>
               </div>
@@ -156,7 +172,7 @@ $(document).ready(function(){
               Alert.warn("<strong>投注失败!</strong> Try submitting again.");
             }
             form.removeClass("was-validated");
-            refreshList();
+            refreshBets();
           }, 'text');
         };
       }(match.fifa_id));
@@ -169,11 +185,15 @@ $(document).ready(function(){
         appendMatch(match);        
         refreshMatch(match);
       }
+
+      refreshBets();
     }, 'json');
+
   }  
 
-  refreshList();
   getCurrentMatch();
+
+  //have to be called after getting currentMatches populated
 
   window.setInterval(function(){
     $.get("https://worldcup.sfg.io/matches/today?by_date=asc", function(data) {
