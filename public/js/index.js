@@ -60,9 +60,11 @@ $(document).ready(function(){
     SWE : "SE",
     CHE : "CH",
     COL : "CO",
-    GBR : "GB",
+    ENG : "GB",
     CRO : "HR",
     DEN : "DK",
+    SUI : "CH",
+    
   };
 
   badgemap = {
