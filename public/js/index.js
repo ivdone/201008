@@ -64,7 +64,7 @@ $(document).ready(function(){
     CRO : "HR",
     DEN : "DK",
     SUI : "CH",
-    
+
   };
 
   badgemap = {
@@ -141,9 +141,9 @@ $(document).ready(function(){
             <div class="col">                
               <div class="input-group input-group-sm">
                 <div class="input-group-prepend">
-                  <span class="input-group-text">￥(1 - 200)</span>
+                  <span class="input-group-text">￥(5 - 200)</span>
                 </div>
-                <input type="number" id="bet${match.fifa_id}" min="1" max="200" class="form-control" aria-label="下注金额" required>
+                <input type="number" id="bet${match.fifa_id}" min="5" max="200" class="form-control" aria-label="下注金额" required>
               </div>
             </div>
             <div class="col">
