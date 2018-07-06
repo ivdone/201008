@@ -7,8 +7,8 @@ var app = express();
 
 var path = __dirname + '/views/'
 
-var users = ['fsy', 'lzh', 'hy', 'xjw', 'yjb', 'xq', 'zx', 'wjl', 'cxy', 'ljy', 'zzz', 'fz', 'hl', 'ys', 'zxd', 'zk', 'hjc']
-var passwords = ['1598', '9982', '5665', '8107', '5754', '2408', '0482', '9808', '3932', '9603', '7971', '2875', '2103', '8086', '7606', '0051', '2213']
+var users = ['fsy', 'lzh', 'hy', 'xjw', 'yjb', 'xq', 'zx', 'wjl', 'cxy', 'ljy', 'zzz', 'fz', 'hl', 'ys', 'zxd', 'zk', 'hjc', 'syh', 'sm', 'yhn', 'xsj']
+var passwords = ['1598', '9982', '5665', '8107', '5754', '2408', '0482', '9808', '3932', '9603', '7971', '2875', '2103', '8086', '7606', '0051', '2213', '0789', '0602', '8915', '5197']
 
 function getFormattedDate(){
     var d = new Date();
