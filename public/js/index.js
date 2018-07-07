@@ -25,6 +25,8 @@ $(document).ready(function(){
       for (i = rowCount; i < data.length; i++) {
         var bt = data[i].bettime || "赛前"
         var teams = currentMatches[data[i].fid];
+        if (teams === undefined)
+          continue;
         tbd.append(`<tr id="row${i}">
                     <td>${bt}</td>
                     <td>${data[i].fid}</td>
